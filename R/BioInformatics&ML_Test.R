@@ -55,7 +55,9 @@ df <- df %>%
 
 # Calculating intron lengths based on strand direction
 df$intron <- 0
-df$intron[df$rank > 1] <- df$start[df$rank > 1] - df$end[df$rank > 0]
+# Calculating intron lengths, since coordinates are present on exon difference between start coordinate and previous end coordinate - 1
+# df$intron[df$rank > 1] <- (df$start[df$rank > 1] - df$end[df$rank > 0]) - 1
+df$intron[df$rank > 1] <- (lead(df$start) - df$end) - 1
 df$intron <- ifelse(df$strand == '-', -df$intron, abs(df$intron))
 
 # Reset the intron length for the first exon in each transcript
