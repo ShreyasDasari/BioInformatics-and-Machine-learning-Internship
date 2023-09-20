@@ -1,1 +1,3 @@
 # BioInformatics-and-Machine-learning-Internship
+
+Welcome to the BioInformatics-and-Machine-learning-Internship Test repository! Here, you'll find a collection of tasks and projects completed in both using Python and R programming languages, all of which dealt with the intriguing fields of bioinformatics, exons, and transcripts. I've delved into the complex nuances of genetic data throughout this work, investigating transcript IDs, sequences, exon structures, and more. These activities have given us useful information on genetic data processing and the use of machine learning in bioinformatics.
