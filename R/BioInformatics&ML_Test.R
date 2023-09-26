@@ -75,18 +75,20 @@ df <- df %>%
 
 # Calculating half_width based on exon width
 df$half_width <- floor(df$width / 2)
+df$half_width_intron <- floor(df$intron / 2)
 
 # Calculating L1, L2, U1, U2 based on half_width and strand
-df$L1 <- pmin(df$half_width, 100)
-df$L2 <- pmin(df$half_width, 100)
-df$U1 <- pmin(df$half_width, 100)
-df$U2 <- pmin(df$half_width, 100)
+df$L1 <- df$start - pmin(100, floor(df$intron / 2))
+df$L2 <- df$start + pmin(100, floor(df$width / 2))
+df$U1 <- df$end - pmin(100, floor(df$width / 2))
+df$U2 <- df$end + pmin(100, floor(df$intron / 2))
 
 # Replacing L1, L2, U1, U2 with half the length of exon or intron if less than 200 units
-df$L1[df$half_width < 100] <- df$half_width[df$half_width < 100]
-df$L2[df$half_width < 100] <- df$half_width[df$half_width < 100]
-df$U1[df$half_width < 100] <- df$half_width[df$half_width < 100]
-df$U2[df$half_width < 100] <- df$half_width[df$half_width < 100]
+df$L1[df$intron < 200] <- df$start[df$intron < 200] - df$half_width_intron[df$intron < 200]
+df$L2[df$width < 200] <- df$start[df$width < 200] + df$half_width[df$width < 200]
+df$U1[df$width < 200] <- df$end[df$width < 200] - df$half_width[df$width < 200]
+df$U2[df$intron < 200] <- df$end[df$intron < 200] + df$half_width_intron[df$intron < 200]
+
 
 # Adjusting coordinates for '-' strand
 df[df$strand == '-', c('L1', 'L2', 'U1', 'U2')] <- df[df$strand == '-', c('U2', 'U1', 'L2', 'L1')]
@@ -97,9 +99,11 @@ df <- df %>%
   mutate(L1 = ifelse(rank == min(rank), 0, L1),
          U2 = ifelse(rank == max(rank), 0, U2))
 
-# Dropping the 'half_width' column if you don't need it anymore
+# Dropping the 'half_width' and 'half_width_intron column 
 df <- df %>%
   select(-half_width)
+df <- df %>%
+  select(-half_width_intron)
 
 # Ensuring that L1, L2, U1, U2 are integers
 df$L1 <- as.integer(df$L1)
